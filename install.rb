@@ -6,8 +6,14 @@ deployment do
     end
   end
 
+  package :ca_certificates do
+    description 'CA Certificates'
+    apt 'ca-certificates'
+  end
+
   policy :sprinkle_server, roles: :app do
     requires :build_essential
+    requires :ca_certificates
   end
 
   delivery :ssh do
