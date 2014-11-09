@@ -11,9 +11,18 @@ deployment do
     apt 'ca-certificates'
   end
 
+  package :digicert_root_ca do
+    description 'Install digicert root ca cert for SSL comms with github via wget'
+    runner 'mkdir /usr/local/share/ca-certificates'
+    runner 'wget -cq -O /usr/local/share/ca-certificates/DigiCertHighAssuranceEVRootCA.crt http://cacerts.digicert.com/DigiCertHighAssuranceEVRootCA.crt'
+    runner 'update-ca-certificates'
+    requires :ca_certificates
+  end
+
   policy :sprinkle_server, roles: :app do
     requires :build_essential
     requires :ca_certificates
+    requires :digicert_root_ca
   end
 
   delivery :ssh do
