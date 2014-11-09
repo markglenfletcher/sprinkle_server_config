@@ -17,11 +17,40 @@ deployment do
     runner 'update-ca-certificates'
     requires :ca_certificates
   end
-  
+
+  package :ruby_install do
+    description 'Ruby installer'
+    source 'https://github.com/postmodern/ruby-install/archive/v0.5.0.tar.gz' do
+      custom_dir 'ruby-install-0.5.0'
+      custom_install 'make install'
+    end
+    verify do
+      has_executable 'ruby-install'
+    end
+    requires :digicert_root_ca
+  end
+
+  package :chruby do
+    description 'Install Ruby Version Management tool'
+    source 'https://github.com/postmodern/chruby/archive/v0.3.8.tar.gz' do
+      custom_dir 'chruby-0.3.8'
+      custom_install 'make install'
+    end
+    push_text 'source /usr/local/share/chruby/chruby.sh', '~/.bashrc'
+    push_text 'source /usr/local/share/chruby/auto.sh', '~/.bashrc'
+    runner 'source ~/.bashrc'
+    verify do
+      has_file '/usr/local/share/chruby/chruby.sh'
+    end
+    requires :ruby_install
+  end
+
   policy :sprinkle_server, roles: :app do
     requires :build_essential
     requires :ca_certificates
     requires :digicert_root_ca
+    requires :ruby_install
+    requires :chruby
   end
 
   delivery :ssh do
