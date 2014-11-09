@@ -1,5 +1,13 @@
 deployment do
+  package :build_essential do
+    description 'Build Essential'
+    apt 'build-essential' do
+      pre :install, 'apt-get -y update', 'apt-get -y dist-upgrade'
+    end
+  end
+
   policy :sprinkle_server, roles: :app do
+    requires :build_essential
   end
 
   delivery :ssh do
