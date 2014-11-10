@@ -18,6 +18,13 @@ deployment do
     requires :ca_certificates
   end
 
+  package :git do
+    apt 'git'
+    verify do
+      has_executable 'git'
+    end
+  end
+
   package :ruby_install do
     description 'Ruby installer'
     source 'https://github.com/postmodern/ruby-install/archive/v0.5.0.tar.gz' do
@@ -63,6 +70,7 @@ deployment do
     requires :ruby_install
     requires :chruby
     requires :install_mri
+    requires :git
   end
 
   delivery :ssh do
