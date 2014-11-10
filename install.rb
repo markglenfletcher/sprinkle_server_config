@@ -45,12 +45,24 @@ deployment do
     requires :ruby_install
   end
 
+  package :install_mri do
+    description 'Install version of ruby'
+    version = '2.1.3'
+    runner "ruby-install ruby #{version}"
+    push_text 'ruby-2.1.3', '~/.ruby-version'
+    verify do
+      has_file '/opt/rubies/ruby-2.1.3/bin/ruby'
+    end
+    requires :chruby
+  end
+
   policy :sprinkle_server, roles: :app do
     requires :build_essential
     requires :ca_certificates
     requires :digicert_root_ca
     requires :ruby_install
     requires :chruby
+    requires :install_mri
   end
 
   delivery :ssh do
